@@ -1,2 +1,24 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<script>
+    import "./editor.css";
+    import { onMount } from "svelte";
+    import {basicSetup as CodeBasicSetup} from "codemirror";
+    import {EditorView as CodeEditorView} from "@codemirror/view";
+    import {Compartment} from "@codemirror/state";
+    import {markdown} from "@codemirror/lang-markdown";
+
+    let languageConf = new Compartment;
+    let codeElement;
+    let _codeEditorView;
+
+    onMount(() => {
+        _codeEditorView = new CodeEditorView({
+            parent: codeElement,
+            doc: "Hello world",
+            extensions: [
+                CodeBasicSetup,
+                languageConf.of(markdown())
+            ]
+        });
+    });
+</script>
+<div bind:this={codeElement} class="editor" style="height: 300px; overflow: scroll"></div>

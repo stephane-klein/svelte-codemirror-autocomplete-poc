@@ -14,5 +14,11 @@
     "svelte": "4.2.15",
     "vite": "5.2.10"
   },
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "@codemirror/lang-markdown": "6.2.5",
+    "@codemirror/state": "6.4.1",
+    "@codemirror/view": "6.26.3",
+    "codemirror": "6.0.1"
+  }
 }
