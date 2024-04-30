@@ -2,37 +2,38 @@
     import "./editor.css";
     import { onMount } from "svelte";
     import {basicSetup as CodeBasicSetup} from "codemirror";
-    import {EditorView as CodeEditorView, keymap } from "@codemirror/view";
+    import {EditorView, keymap } from "@codemirror/view";
     import {Compartment} from "@codemirror/state";
     import {markdown} from "@codemirror/lang-markdown";
-    import { autocompletion, completionKeymap } from "@codemirror/autocomplete";
+    import { autocompletion, completionKeymap, startCompletion } from "@codemirror/autocomplete";
 
     let languageConf = new Compartment;
     let codeElement;
     let _codeEditorView;
 
     const items = [
-        {label: "[[ab", detail: "Detail about Item0"},
-        {label: "Item1", detail: "Detail about Item1"},
-        {label: "Item2", detail: "Detail about Item2"},
-        {label: "Item3", detail: "Detail about Item3"}
+        {label: "[[ab", displayLabel: "ab", type: "text"},
+        {label: "[[aaaa", displayLabel: "Item2", type: "text"},
+        {label: "[[bbbbb", displayLabel: "Item3", type: "text"},
+        {label: "[[ccccc", displayLabel: "Item4", type: "text"}
     ];
 
     function complete(context) {
-        let before = context.matchBefore(/\[\[$/);
+        let before = context.matchBefore(/\[\[(.*)/);
         if (!before) return null;  // Rien si le déclencheur '[[ 'n'est pas présent
         console.log("ici1");
 
         return {
             from: before.from,
-            options: items.map(item => ({label: item.label, detail: item.detail, type: "text"})),
-            filter: false,
-            validFor: /^[\w\s]*$/
+            // options: items.map(item => ({label: item.label, detail: item.detail, type: "text"})),
+            options: items,
+            // filter: true,
+            // validFor: /^[\w\s]*$/
         };
     }
 
     onMount(() => {
-        _codeEditorView = new CodeEditorView({
+        _codeEditorView = new EditorView({
             parent: codeElement,
             doc: "Hello world",
             extensions: [
@@ -42,7 +43,14 @@
                     override: [complete],
                     activateOnTyping: true
                 }),
-                keymap.of([...completionKeymap])
+                keymap.of([...completionKeymap]),
+                EditorView.updateListener.of(update => {
+                    if (update.changes) {
+                        if (update.changes.inserted.some(text => text === "[[")) {
+                            startCompletion(_codeEditorView);
+                        }
+                    }
+                })
             ]
         });
     });
