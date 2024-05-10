@@ -12,13 +12,14 @@
     let _codeEditorView;
 
     const items = [
-        {label: "[[ab", displayLabel: "ab", type: "text"},
-        {label: "[[aaaa", displayLabel: "Item2", type: "text"},
-        {label: "[[bbbbb", displayLabel: "Item3", type: "text"},
-        {label: "[[ccccc", displayLabel: "Item4", type: "text"}
+        {label: "[[ab", displayLabel: "ab"},
+        {label: "[[aaaa", displayLabel: "Item2"},
+        {label: "[[bbbbb", displayLabel: "Item3"},
+        {label: "[[ccccc", displayLabel: "Item4", type: null}
     ];
 
     function complete(context) {
+        console.log("ici0");
         let before = context.matchBefore(/\[\[(.*)/);
         if (!before) return null;  // Rien si le déclencheur '[[ 'n'est pas présent
         console.log("ici1");
@@ -40,6 +41,7 @@
                 CodeBasicSetup,
                 languageConf.of(markdown()),
                 autocompletion({
+                    icons: false,
                     override: [complete],
                     activateOnTyping: true
                 }),
