@@ -5,31 +5,34 @@
     import {EditorView, keymap } from "@codemirror/view";
     import {Compartment} from "@codemirror/state";
     import {markdown} from "@codemirror/lang-markdown";
-    import { autocompletion, completionKeymap, startCompletion } from "@codemirror/autocomplete";
+    import { autocompletion, completionKeymap, startCompletion, closeBrackets } from "@codemirror/autocomplete";
 
     let languageConf = new Compartment;
     let codeElement;
     let _codeEditorView;
 
-    const items = [
-        {label: "[[ab", displayLabel: "ab"},
-        {label: "[[aaaa", displayLabel: "Item2"},
-        {label: "[[bbbbb", displayLabel: "Item3"},
-        {label: "[[ccccc", displayLabel: "Item4", type: null}
-    ];
+    async function complete(context) {
+        let before = context.matchBefore(/\[\[.*/);
 
-    function complete(context) {
-        console.log("ici0");
-        let before = context.matchBefore(/\[\[(.*)/);
-        if (!before) return null;  // Rien si le déclencheur '[[ 'n'est pas présent
-        console.log("ici1");
+        if (!before) return null;
 
         return {
             from: before.from,
-            // options: items.map(item => ({label: item.label, detail: item.detail, type: "text"})),
-            options: items,
-            // filter: true,
-            // validFor: /^[\w\s]*$/
+            options: (
+                (await (await fetch(`./get-suggestions/`, {})).json())
+                    .filter((item) => item.label.startsWith(before.text.substring(2)))
+                    .map((item) => ({
+                        label: `[[${item.id}`,
+                        displayLabel: item.label
+                    }))
+            ),
+            filter: false,
+            getMatch: (completion) => {
+                if (completion.displayLabel.startsWith(before.text.substring(2))) {
+                    return [0, before.text.length - 2];
+                };
+                return [];
+            }
         };
     }
 
@@ -43,7 +46,7 @@
                 autocompletion({
                     icons: false,
                     override: [complete],
-                    activateOnTyping: true
+                    activateOnTyping: true,
                 }),
                 keymap.of([...completionKeymap]),
                 EditorView.updateListener.of(update => {
@@ -52,7 +55,7 @@
                             startCompletion(_codeEditorView);
                         }
                     }
-                })
+                }),
             ]
         });
     });
