@@ -26,13 +26,7 @@
                         displayLabel: item.label
                     }))
             ),
-            filter: false,
-            getMatch: (completion) => {
-                if (completion.displayLabel.startsWith(before.text.substring(2))) {
-                    return [0, before.text.length - 2];
-                };
-                return [];
-            }
+            filter: false
         };
     }
 
