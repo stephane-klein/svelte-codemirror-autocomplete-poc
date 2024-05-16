@@ -5,7 +5,7 @@
     import {EditorView, keymap } from "@codemirror/view";
     import {Compartment} from "@codemirror/state";
     import {markdown} from "@codemirror/lang-markdown";
-    import { autocompletion, completionKeymap, startCompletion, closeBrackets } from "@codemirror/autocomplete";
+    import { autocompletion, completionKeymap, startCompletion } from "@codemirror/autocomplete";
 
     let languageConf = new Compartment;
     let codeElement;
