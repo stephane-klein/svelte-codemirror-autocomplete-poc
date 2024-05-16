@@ -20,7 +20,7 @@
             from: before.from,
             options: (
                 (await (await fetch(`./get-suggestions/`, {})).json())
-                    .filter((item) => item.label.startsWith(before.text.substring(2)))
+                    .filter((item) => item.label.toLowerCase().startsWith(before.text.substring(2).toLowerCase()))
                     .map((item) => ({
                         label: `[[${item.id}`,
                         displayLabel: item.label
