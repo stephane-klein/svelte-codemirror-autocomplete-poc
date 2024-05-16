@@ -12,7 +12,7 @@
     let _codeEditorView;
 
     async function complete(context) {
-        let before = context.matchBefore(/\[\[/);
+        let before = context.matchBefore(/\[\[\w*/);
 
         if (!before) return null;
 
